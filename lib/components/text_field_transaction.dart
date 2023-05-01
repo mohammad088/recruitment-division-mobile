@@ -18,7 +18,10 @@ class TextFieldTransaction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      decoration: inputDecoration,
+      decoration: inputDecoration.copyWith(
+        filled: true,
+        fillColor: Colors.white,
+      ),
       controller: controller,
       cursorColor: Colors.brown,
       keyboardType: TextInputType.name,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:recruitment_division_automation/components/dialog.dart';
 import '../components/bottom_transaction.dart';
 import '../components/numbers_text_field.dart';
 import '../controllers/page_view_controller.dart';
@@ -37,6 +38,8 @@ class Transaction2 extends StatelessWidget {
                             menuMaxHeight: Config.screenHeight! * 0.3,
                             isExpanded: true,
                             decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                     borderSide:
@@ -57,7 +60,6 @@ class Transaction2 extends StatelessWidget {
                               );
                             }).toList(),
                             onChanged: (item) {
-                              c.selectedArea = c.areas[item]![1];
                               c.selectedGovernorates = item!;
                               c.update();
                             },
@@ -80,24 +82,32 @@ class Transaction2 extends StatelessWidget {
                             menuMaxHeight: Config.screenHeight! * 0.3,
                             isExpanded: true,
                             decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                     borderSide:
                                         const BorderSide(color: Colors.grey))),
                             focusColor: Colors.green,
                             style: const TextStyle(color: Colors.brown),
-                            items: c.areas[c.selectedGovernorates]!.map((item) {
-                              return DropdownMenuItem<String>(
-                                value: item,
-                                child: Center(
-                                  child: Text(
-                                    item,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 17),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
+                            items: c.selectedGovernorates == ''
+                                ? [
+                                    const DropdownMenuItem(
+                                      child: Text(''),
+                                    )
+                                  ]
+                                : c.areas[c.selectedGovernorates]!.map((item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item,
+                                      child: Center(
+                                        child: Text(
+                                          item,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(fontSize: 17),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                             onChanged: (item) {
                               c.selectedArea = item!;
                               c.update();
@@ -112,12 +122,12 @@ class Transaction2 extends StatelessWidget {
                             children: [
                               NumbersTextField(
                                 inputDecoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white,
                                   focusedBorder: c.numberLengthError
                                       ? Config.errorBorder
                                       : Config.focusBorder,
-                                  enabledBorder: c.numberLengthError
-                                      ? Config.errorBorder
-                                      : Config.outlinedBorder,
+                                  enabledBorder: Config.outlinedBorder,
                                 ),
                                 onChanged: () {
                                   if (c.phoneNumberController.text.length <
@@ -162,13 +172,12 @@ class Transaction2 extends StatelessWidget {
                               }
                             },
                             inputDecoration: InputDecoration(
-                              focusedBorder: c.nationalNumberError
-                                  ? Config.errorBorder
-                                  : Config.focusBorder,
-                              enabledBorder: c.nationalNumberError
-                                  ? Config.errorBorder
-                                  : Config.outlinedBorder,
-                            ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                focusedBorder: c.nationalNumberError
+                                    ? Config.errorBorder
+                                    : Config.focusBorder,
+                                enabledBorder: Config.outlinedBorder),
                           );
                         }),
                     NumbersTextField(
@@ -178,6 +187,8 @@ class Transaction2 extends StatelessWidget {
                         controller: c.restrictionNumberController,
                         onChanged: () {},
                         inputDecoration: const InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
                             hintText: 'رقم القيد',
                             hintTextDirection: TextDirection.rtl)),
                     Config.spaceMeduim,
@@ -197,6 +208,8 @@ class Transaction2 extends StatelessWidget {
                             menuMaxHeight: Config.screenHeight! * 0.3,
                             isExpanded: true,
                             decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                     borderSide:
@@ -222,8 +235,8 @@ class Transaction2 extends StatelessWidget {
                             },
                           );
                         }),
-                        Config.spaceMeduim,
-                        GetBuilder(
+                    Config.spaceMeduim,
+                    GetBuilder(
                         init: PageviewController(),
                         builder: (c) {
                           return DropdownButtonFormField(
@@ -239,6 +252,8 @@ class Transaction2 extends StatelessWidget {
                             menuMaxHeight: Config.screenHeight! * 0.3,
                             isExpanded: true,
                             decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(20),
                                     borderSide:
@@ -289,9 +304,25 @@ class Transaction2 extends StatelessWidget {
               ),
               BottomTranaction(
                 onPressed: () {
-                  c.controller.animateToPage(2,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.fastLinearToSlowEaseIn);
+                  if (c.nationalNumberController.text.length < 11) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else if (c.phoneNumberController.text.length != 10) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else if (c.restrictionNumberController.text.isEmpty) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else if (c.selectedStatus.isEmpty) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else if (c.selectedTransactionType.isEmpty) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else if (c.selectedGovernorates.isEmpty) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else if (c.selectedArea.isEmpty) {
+                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
+                  } else {
+                    c.controller.animateToPage(2,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.fastLinearToSlowEaseIn);
+                  }
                 },
                 onBackPressed: () => c.controller.animateToPage(0,
                     duration: const Duration(milliseconds: 500),

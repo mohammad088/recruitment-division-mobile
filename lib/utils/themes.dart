@@ -6,7 +6,7 @@ class Themes {
           iconTheme: IconThemeData(color: Colors.grey),
           backgroundColor: Colors.white,
           elevation: 3),
-      scaffoldBackgroundColor: const Color.fromRGBO(234, 233, 233, 0.8),
+      scaffoldBackgroundColor: const Color.fromRGBO(234, 233, 233, 1),
       drawerTheme: const DrawerThemeData(),
       inputDecorationTheme: const InputDecorationTheme(
           focusedBorder: OutlineInputBorder(

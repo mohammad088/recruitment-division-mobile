@@ -216,9 +216,8 @@ class Transaction1 extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               LinearPercentIndicator(
-                linearGradient:const  LinearGradient(colors: [
-                  Colors.orange,Colors.green
-                ]),
+                linearGradient:
+                    const LinearGradient(colors: [Colors.orange, Colors.green]),
                 barRadius: const Radius.circular(25),
                 lineHeight: Config.safeBlockVertical! * 5,
                 center: const Text('0%'),
@@ -229,9 +228,62 @@ class Transaction1 extends StatelessWidget {
               ),
               BottomTranaction(
                 onPressed: () {
-                  c.controller.animateToPage(1,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.fastLinearToSlowEaseIn);
+                  if (c.firstNameerror &&
+                      c.lastNameerror &&
+                      c.fatherNameerror &&
+                      c.motherNameerror &&
+                      c.firstNameController.text != '' &&
+                      c.lastNameController.text != '' &&
+                      c.fatherNameController.text != '' &&
+                      c.motherNameController.text != '') {
+                    c.controller.animateToPage(1,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.fastLinearToSlowEaseIn);
+                  } else {
+                    Get.dialog(Center(
+                      child: Card(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            side: const BorderSide(color: Colors.red)),
+                        elevation: 7,
+                        child: SizedBox(
+                          width: Config.screenWidth! * 0.7,
+                          height: Config.screenHeight! * 0.3,
+                          child: Column(
+                            children: [
+                              Config.spaceSmall,
+                              const Text(
+                                'الرجاء تعبئة الحقول ببيانات صحيحة',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red),
+                              ),
+                              const Divider(
+                                color: Colors.brown,
+                                thickness: 3,
+                                indent: 15,
+                                endIndent: 15,
+                              ),
+                              Config.spaceSmall,
+                              SizedBox(
+                                width: Config.screenWidth! * 0.3,
+                                height: Config.screenHeight! * 0.06,
+                                child: ElevatedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                    onPressed: () => Get.back(),
+                                    child: const Text('حسنا')),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ));
+                  }
                 },
                 onBackPressed: () => Get.back(),
               )

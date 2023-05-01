@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_navigation/src/dialog/dialog_route.dart';
+import 'package:recruitment_division_automation/components/add_new_question.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../controllers/common_question_controller.dart';
 import '../utils/config.dart';
+import '../views/common_question_page.dart';
 
 class CommonQuestionBody extends StatefulWidget {
   const CommonQuestionBody({super.key});
@@ -10,126 +16,177 @@ class CommonQuestionBody extends StatefulWidget {
 }
 
 class _CommonQuestionBodyState extends State<CommonQuestionBody> {
-  List<Questions> questionsList = [
-    Questions(
-        title: 'كيف استطيع الحصول على مصدقة تأجيل',
-        content: 'تسطيع الحصول عليها من خلال مراجعة شؤون الكلية'),
-    Questions(title: 'aaaaa', content: 'dddddddddddd'),
-    Questions(title: 'aaaaa', content: 'dddddddddddd'),
-    Questions(title: 'aaaaa', content: 'dddddddddddd'),
-    Questions(title: 'aaaaa', content: 'dddddddddddd'),
-    Questions(title: 'aaaaa', content: 'dddddddddddd'),
-    Questions(title: 'aaaaa', content: 'dddddddddddd'),
-  ];
+  CommonQuestionController controller = Get.put(CommonQuestionController());
   @override
   Widget build(BuildContext context) {
     Config().init(context);
-    return SingleChildScrollView(
-      child: Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 30),
-          color: Colors.white,
-          width: Config.screenWidth! * 0.8,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Config.spaceMeduim,
-              const Text(
-                'أسئلة واستفسارات',
-                style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 138, 102, 10)),
-              ),
-              Config.spaceMeduim,
-              ListTile(
-                iconColor: Colors.black,
-                title: const Text(
-                  'اضف سؤال جديد',
-                  textDirection: TextDirection.rtl,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                ),
-                trailing: const Icon(
-                  Icons.edit_note_rounded,
-                  size: 25,
-                ),
-                onTap: () {},
-              ),
-              ExpansionPanelList(
-                  expansionCallback: (int index, bool isExpanded) {
-                    setState(() {
-                      questionsList[index].isExpanded = !isExpanded;
-                    });
-                  },
-                  children:
-                      questionsList.map<ExpansionPanel>((Questions questions) {
-                    return ExpansionPanel(
-                        backgroundColor:
-                            questions.isExpanded ? Colors.green : Colors.white,
-                        headerBuilder: (ctx, bool isExpanded) {
-                          return Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        size: 13,
-                                        color: Colors.red,
-                                      )),
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        size: 13,
-                                        color:
-                                            Color.fromARGB(255, 138, 102, 10),
-                                      )),
-                                  Container(
-                                    padding: const EdgeInsets.only(
-                                        left: 2, bottom: 25, top: 25),
-                                    child: SizedBox(
-                                      width: Config.screenWidth! * 0.3,
+    return controller.initialized
+        ? SingleChildScrollView(
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 30),
+                color: Colors.white,
+                width: Config.screenWidth! * 0.8,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Config.spaceMeduim,
+                    const Text(
+                      'أسئلة واستفسارات',
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 138, 102, 10)),
+                    ),
+                    Config.spaceMeduim,
+                    ListTile(
+                      iconColor: Colors.black,
+                      title: const Text(
+                        'اضف سؤال جديد',
+                        textDirection: TextDirection.rtl,
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.normal),
+                      ),
+                      trailing: const Icon(
+                        Icons.edit_note_rounded,
+                        size: 25,
+                      ),
+                      onTap: () {
+                        questionDialog(
+                          () async {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            String token = prefs.getString('token') ?? '';
+                            await controller.addNewQuestion(
+                                controller.questionController.text,
+                                controller.answerController.text,
+                                token);
+                            controller.GetBuilderkey.currentState!.activate();
+                            Get.back();
+                          },
+                        );
+                      },
+                    ),
+                    GetBuilder(
+                        key: controller.GetBuilderkey,
+                        init: CommonQuestionController(),
+                        builder: (controller) {
+                          return ExpansionPanelList(
+                              expansionCallback: (int index, bool isExpanded) {
+                                controller.changeExpantion(index);
+                              },
+                              children: controller.questions
+                                  .map<ExpansionPanel>((Question question) {
+                                return ExpansionPanel(
+                                    backgroundColor: question.isExpanded
+                                        ? Colors.green
+                                        : Colors.white,
+                                    headerBuilder: (ctx, bool isExpanded) {
+                                      return Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () async {
+                                                    SharedPreferences prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    String token =
+                                                        prefs.getString(
+                                                                'token') ??
+                                                            '';
+                                                    await controller
+                                                        .deleteQuestion(token,
+                                                            question.data.id!);
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.delete,
+                                                    size: 13,
+                                                    color: Colors.red,
+                                                  )),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    questionDialog(() async {
+                                                      SharedPreferences prefs =
+                                                          await SharedPreferences
+                                                              .getInstance();
+                                                      String token =
+                                                          prefs.getString(
+                                                                  'token') ??
+                                                              '';
+                                                      await controller
+                                                          .updateQuestionAndAnswer(
+                                                              controller
+                                                                  .questionController
+                                                                  .text,
+                                                              controller
+                                                                  .answerController
+                                                                  .text,
+                                                              token,
+                                                              question
+                                                                  .data.id!);
+                                                      controller.GetBuilderkey
+                                                          .currentState!
+                                                          .activate();
+                                                      Get.back();
+                                                    });
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.edit,
+                                                    size: 13,
+                                                    color: Color.fromARGB(
+                                                        255, 138, 102, 10),
+                                                  )),
+                                              Container(
+                                                padding: const EdgeInsets.only(
+                                                    left: 2,
+                                                    bottom: 25,
+                                                    top: 25),
+                                                child: SizedBox(
+                                                  width:
+                                                      Config.screenWidth! * 0.3,
+                                                  child: Text(
+                                                    textDirection:
+                                                        TextDirection.rtl,
+                                                    question.data.question ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                    body: Container(
+                                      width: Config.screenWidth! * 0.8,
+                                      color: Colors.white,
+                                      padding: const EdgeInsets.only(
+                                          bottom: 15, top: 10),
                                       child: Text(
+                                        question.data.answer ?? '',
                                         textDirection: TextDirection.rtl,
-                                        questions.title,
-                                        style: const TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                        body: Container(
-                          width: Config.screenWidth! * 0.8,
-                          color: Colors.white,
-                          padding: const EdgeInsets.only(bottom: 15, top: 10),
-                          child: Text(
-                            questions.content,
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        isExpanded: questions.isExpanded);
-                  }).toList()),
-            ],
-          ),
-        ),
-      ),
-    );
+                                    isExpanded: question.isExpanded);
+                              }).toList());
+                        }),
+                  ],
+                ),
+              ),
+            ),
+          )
+        : const Center(
+            child: CircularProgressIndicator(
+              color: Colors.green,
+            ),
+          );
   }
-}
-
-class Questions {
-  final String title;
-  final String content;
-  bool isExpanded = false;
-
-  Questions({required this.title, required this.content});
 }

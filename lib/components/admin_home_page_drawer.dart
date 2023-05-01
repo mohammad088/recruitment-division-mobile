@@ -83,18 +83,22 @@ class AdminHomePageDrawer extends StatelessWidget {
                             fontSize: 25, fontWeight: FontWeight.normal)),
                     content: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         ListTile(
-                          leading: Icon(Icons.forward),
-                          title: Text('المحافظات',
+                          onTap: () => Get.toNamed('/governoratespage'),
+                          leading: const Icon(Icons.forward),
+                          title: const Text('المحافظات',
                               style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 20,
                                   fontWeight: FontWeight.normal)),
                         ),
                         ListTile(
-                          leading: Icon(Icons.forward),
-                          title: Text('المناطق',
+                          onTap: () {
+                            Get.toNamed('/allareas');
+                          },
+                          leading: const Icon(Icons.forward),
+                          title: const Text('المناطق',
                               style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 20,

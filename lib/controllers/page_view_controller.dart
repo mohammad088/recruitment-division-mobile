@@ -73,24 +73,16 @@ class PageviewController extends GetxController {
     'حمص': ['تلكلخ', 'حمص', 'القصير', 'المخرم', 'الرستن', 'تدمر'],
     'حماه': ['السلمية', 'السقيلبية', 'محردة', 'مصياف', 'حماه']
   };
-  String selectedArea = '';
+  var selectedArea = '';
   String selectedStatus = '';
   String selectedTransactionType = '';
-  @override
-  void onInit() {
-    selectedGovernorates = governorates[0];
-    selectedArea = areas[selectedGovernorates]![0];
-    selectedStatus = enlistmentStatus[0];
-    selectedTransactionType = transactionType[0];
-    super.onInit();
-  }
 
   bool firstNameerror = true;
   bool lastNameerror = true;
   bool fatherNameerror = true;
   bool motherNameerror = true;
-  bool numberLengthError = false;
-  bool nationalNumberError = false;
+  bool numberLengthError = true;
+  bool nationalNumberError = true;
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController fatherNameController = TextEditingController();
@@ -100,7 +92,7 @@ class PageviewController extends GetxController {
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController nationalNumberController = TextEditingController();
   TextEditingController restrictionNumberController = TextEditingController();
-  double currentPage = 0;
+  int currentPage = 0;
   List<String> enlistmentStatus = ['حالة1', 'حالة2', 'حالة3'];
   List<String> transactionType = ['نوع1', 'نوع2', 'نوع3'];
   final PageController controller = PageController();
@@ -115,13 +107,16 @@ class PageviewController extends GetxController {
   File anotherImage = File('');
   final pickedFile = ImagePicker();
 
-  void uploadImage(File image) async {
+  Future<File> uploadImage(File image) async {
     final pickedImage = await pickedFile.pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       image = File(pickedImage.path);
       update();
+      return image;
     } else {
       update();
+      image = File('');
+      return image;
     }
   }
 }

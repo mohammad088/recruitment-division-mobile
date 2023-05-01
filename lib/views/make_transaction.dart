@@ -24,7 +24,7 @@ class MakeTransaction extends StatelessWidget {
           Transaction1(),
           Transaction2(),
           Transaction3(),
-          Transaction4()
+          const Transaction4()
         ],
       ),
     );
