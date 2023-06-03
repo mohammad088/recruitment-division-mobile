@@ -1,7 +1,7 @@
 import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/utils/config.dart';
+import '../utils/config.dart';
 
 class AdminHomePageDrawer extends StatelessWidget {
   const AdminHomePageDrawer({super.key});
@@ -125,13 +125,14 @@ class AdminHomePageDrawer extends StatelessWidget {
           Divider(
             color: Colors.grey.shade800,
           ),
-          const ListTile(
-            leading: Icon(
+          ListTile(
+            onTap: () => Get.toNamed('/userinfo'),
+            leading: const Icon(
               Icons.business_center,
               size: 30,
               color: Colors.grey,
             ),
-            title: Text('تواصل معنا',
+            title: const Text('تواصل معنا',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.normal)),
           ),
         ],

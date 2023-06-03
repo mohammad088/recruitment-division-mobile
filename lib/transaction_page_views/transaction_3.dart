@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:recruitment_division_automation/controllers/page_view_controller.dart';
-import 'package:recruitment_division_automation/utils/config.dart';
+import 'package:recruitment_division_automation/models/transaction_table.dart';
+
 import '../components/bottom_transaction.dart';
 import '../components/dialog.dart';
 import '../components/image_box.dart';
+import '../controllers/page_view_controller.dart';
+import '../utils/config.dart';
 
 class Transaction3 extends StatelessWidget {
   Transaction3({super.key});
@@ -113,9 +115,37 @@ class Transaction3 extends StatelessWidget {
                       c.backIdImage.path != '' &&
                       c.frontIdImage.path != '' &&
                       c.anotherImage.path != '') {
-                    c.controller.animateToPage(3,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.fastLinearToSlowEaseIn);
+                    c
+                        .addNewTransaction(
+                            Data(
+                              notes: c.notesController.text,
+                              name: c.firstNameController.text,
+                              fatherName: c.fatherNameController.text,
+                              motherName: c.motherNameController.text,
+                              familyName: c.lastNameController.text,
+                              provinceId: c.selectedGovernorates,
+                              regionId: c.selectedArea,
+                              nationalIdentificationNumber:
+                                  int.parse(c.nationalNumberController.text),
+                              villageNumber: c.restrictionNumberController.text,
+                              phone1: int.parse(c.phoneNumberController.text),
+                              enlistmentStatueId: int.parse(c.selectedStatus),
+                              transactiontypeId:
+                                  int.parse(c.selectedTransactionType),
+                              userImage: c.specialImage,
+                              userId: c.prefs.getInt('user_id'),
+                              frontFaceOfIdentity: c.frontIdImage,
+                              backFaceOfIdentity: c.backIdImage,
+                              attachedImage: c.anotherImage,
+                            ),
+                            c.prefs.getString('token')!)
+                        .then((value) {
+                      if (c.storeAccess) {
+                        c.controller.animateToPage(3,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.fastLinearToSlowEaseIn);
+                      }
+                    });
                   } else {
                     dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
                   }

@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/components/dialog.dart';
-import 'package:recruitment_division_automation/models/areas_model.dart';
+import '../components/dialog.dart';
+import '../models/areas_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AreasController extends GetxController {
+  String link = 'http://10.0.2.2:8000';
   SharedPreferences? prefs;
   String token = '';
   AreasModel areasModel = AreasModel();
@@ -22,7 +23,7 @@ class AreasController extends GetxController {
 
   Future<dynamic> getAllRegions(String token) async {
     try {
-      final response = await Dio().get('http://127.0.0.1:8000/api/regions',
+      final response = await Dio().get('$link/api/regions',
           options: Options(headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
@@ -30,7 +31,7 @@ class AreasController extends GetxController {
           data: {'token': token});
       if (response.statusCode == 200 && response.data != '') {
         areasModel = AreasModel.fromJson(response.data);
-        areas = areasModel.data ?? [Data(id: 1 ,name: 'homs')];
+        areas = areasModel.data ?? [Data(id: 1, name: 'homs')];
         update();
       }
     } catch (error) {

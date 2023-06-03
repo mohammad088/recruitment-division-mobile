@@ -1,15 +1,23 @@
-import 'dart:convert';
-
-import 'package:enough_convert/enough_convert.dart';
 import 'dart:io';
 import 'package:csv/csv.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:recruitment_division_automation/components/dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/transastions.dart';
 
 class TableController extends GetxController {
+  GlobalKey tableKey = GlobalKey();
+  String link = 'http://10.0.2.2:8000';
+  late Transactions transactionTable;
+  late SharedPreferences prefs;
+  String token = '';
+  bool selected = false;
+
   void loadCSV() async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.storage,
@@ -20,7 +28,7 @@ class TableController extends GetxController {
     rows.add(row);
     for (int i = 0; i < filteredData.length; i++) {
       List<dynamic> row = [];
-      row.add(filteredData[i]['الاسم الأول']);
+      row.add(filteredData[i].name);
       rows.add(row);
     }
     String csv = const ListToCsvConverter().convert(rows);
@@ -31,27 +39,30 @@ class TableController extends GetxController {
   }
 
   void onChange(String text) {
-    filteredData = text.isEmpty
-        ? data
-        : data
-            .where((item) =>
-                item['الاسم الأول'].toLowerCase().contains(text.toLowerCase()))
-            .toList();
-    update();
+    if (text.isEmpty) {
+      filteredData = transactionTable.data!;
+    } else {
+      filteredData = transactionTable.data!
+          .where((item) =>
+              item.name.toString().toLowerCase().contains(text.toLowerCase()))
+          .toList();
+    }
+    update([1]);
   }
 
   bool sort = true;
   // ignore: prefer_typing_uninitialized_variables
-  List<Map<String, dynamic>> filteredData = [{}];
+  List<Data> filteredData = [];
+
   assertColumn(int columnIndex, bool asceding) {
     if (columnIndex == 15) {
       if (asceding) {
         filteredData.sort(
-          (a, b) => a['الاسم الأول'].compareTo(b['الاسم الأول']),
+          (a, b) => a.name.toString().compareTo(b.name.toString()),
         );
       } else {
         filteredData.sort(
-          (a, b) => b['الاسم الأول'].compareTo(a['الاسم الأول']),
+          (a, b) => b.name.toString().compareTo(a.name.toString()),
         );
       }
     }
@@ -59,124 +70,98 @@ class TableController extends GetxController {
 
   TextEditingController searchController = TextEditingController();
   @override
-  void onInit() {
-    filteredData = data;
+  void onInit() async {
+    prefs = await SharedPreferences.getInstance();
+    token = prefs.getString('token') ?? '';
+    await getAllTransactions(token);
+    filteredData = transactionTable.data ?? [];
     super.onInit();
   }
 
-  List<Map<String, dynamic>> data = [
-    {
-      'الاسم الأول': 'محمد',
-      'الاسم الأخير': 'ديبو',
-      'الأب': 'علي',
-      'الأم': 'مياده',
-      'الرقم الوطني': '123',
-      'رقم القيد': '123',
-      'المحافظة': 'حمص',
-      'المنطقة': 'حمص',
-      'رقم الهاتف': '123',
-      'حالة التجنيد': 'معفى',
-      'نوع المعاملة': 'تأجيل دراسي',
-      'صورة': 'url',
-      'صورة ملحقة': 'url',
-      'البطاقة': 'url',
-      'البطاقة 2': 'url',
-      '': false
-    },
-    {
-      'الاسم الأول': 'محمود',
-      'الاسم الأخير': 'محمد',
-      'الأب': 'تيسير',
-      'الأم': 'حسنة',
-      'الرقم الوطني': '123',
-      'رقم القيد': '123',
-      'المحافظة': 'حمص',
-      'المنطقة': 'حمص',
-      'رقم الهاتف': '123',
-      'حالة التجنيد': 'معفى',
-      'نوع المعاملة': 'تأجيل دراسي',
-      'صورة': 'url',
-      'صورة ملحقة': 'url',
-      'البطاقة': 'url',
-      'البطاقة 2': 'url',
-      '': false
-    },
-    {
-      'الاسم الأول': 'سامر',
-      'الاسم الأخير': 'سمرة',
-      'الأب': 'سام',
-      'الأم': 'سميرة',
-      'الرقم الوطني': '123',
-      'رقم القيد': '123',
-      'المحافظة': 'حمص',
-      'المنطقة': 'حمص',
-      'رقم الهاتف': '123',
-      'حالة التجنيد': 'معفى',
-      'نوع المعاملة': 'تأجيل دراسي',
-      'صورة': 'url',
-      'صورة ملحقة': 'url',
-      'البطاقة': 'url',
-      'البطاقة 2': 'url',
-      '': false
-    },
-    {
-      'الاسم الأول': 'جابر',
-      'الاسم الأخير': 'عيود',
-      'الأب': 'سمير',
-      'الأم': 'مزنة',
-      'الرقم الوطني': '123',
-      'رقم القيد': '123',
-      'المحافظة': 'حمص',
-      'المنطقة': 'حمص',
-      'رقم الهاتف': '123',
-      'حالة التجنيد': 'معفى',
-      'نوع المعاملة': 'تأجيل دراسي',
-      'صورة': 'url',
-      'صورة ملحقة': 'url',
-      'البطاقة': 'url',
-      'البطاقة 2': 'url',
-      '': false
-    },
-    {
-      'الاسم الأول': 'عبدالله',
-      'الاسم الأخير': 'محمد',
-      'الأب': 'يوسف',
-      'الأم': 'يسرى',
-      'الرقم الوطني': '123',
-      'رقم القيد': '123',
-      'المحافظة': 'حمص',
-      'المنطقة': 'حمص',
-      'رقم الهاتف': '123',
-      'حالة التجنيد': 'معفى',
-      'نوع المعاملة': 'تأجيل دراسي',
-      'صورة': 'url',
-      'صورة ملحقة': 'url',
-      'البطاقة': 'url',
-      'البطاقة 2': 'url',
-      '': false
-    },
-    {
-      'الاسم الأول': 'كامل',
-      'الاسم الأخير': 'حسن',
-      'الأب': 'محمد',
-      'الأم': 'لينا',
-      'الرقم الوطني': '123',
-      'رقم القيد': '123',
-      'المحافظة': 'حمص',
-      'المنطقة': 'حمص',
-      'رقم الهاتف': '123',
-      'حالة التجنيد': 'معفى',
-      'نوع المعاملة': 'تأجيل دراسي',
-      'صورة': 'url',
-      'صورة ملحقة': 'url',
-      'البطاقة': 'url',
-      'البطاقة 2': 'url',
-      '': false
+  Future<dynamic> getAllTransactions(String token) async {
+    try {
+      final response = await Dio().get('$link/api/transactions',
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ),
+          data: {'token': token});
+      if (response.statusCode == 200 && response.data != '') {
+        transactionTable = Transactions.fromJson(response.data);
+
+        update([1]);
+      }
+    } catch (error) {
+      error.printError();
+      dialog('هنالك خطأ');
     }
-  ];
+  }
+
+  Future<dynamic> updateTransaction(Data data, int id, String token) async {
+    try {
+      final response = await Dio().post('$link/api/transaction/update/$id',
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ),
+          data: {
+            'name': data.name,
+            'user_id': data.userId,
+            'notes': data.notes,
+            'provinces_consent': data.provincesConsent,
+            'region_consent': data.regionConsent,
+            'province_id': data.provinceId,
+            'region_id': data.regionId,
+            'user_image': data.userImage,
+            'mother_name': data.motherName,
+            'father_name': data.fatherName,
+            'family_name': data.familyName,
+            'phone1': data.phone1,
+            'village_number': data.villageNumber,
+            'national_identification_number': data.nationalIdentificationNumber,
+            'front_face_of_identity': data.frontFaceOfIdentity,
+            'back_face_of_identity': data.backFaceOfIdentity,
+            'attached_image': data.attachedImage,
+            'transactiontype_id': data.transactiontypeId,
+            'token': token
+          });
+      if (response.statusCode == 200 && response.data != '') {
+        transactionTable = Transactions.fromJson(response.data);
+        update();
+      }
+    } catch (error) {
+      dialog('هنالك خطأ');
+    }
+  }
+
+  Future<dynamic> deleteTransacrion(String token, int id) async {
+    try {
+      final response = await Dio().post('$link/api/transaction/delete/$id',
+          options: Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token'
+            },
+          ),
+          data: {'token': token});
+      if (response.statusCode == 200) {
+        transactionTable.data!.removeWhere((element) => element.id == id);
+        update([1]);
+      }
+    } catch (error) {
+      error.printError();
+      dialog('هنالك خطأ');
+      update();
+    }
+  }
+
   bool isSelected = false;
   void onCheckboxChange(int index) {
     isSelected = !isSelected;
-    update();
+    update([1]);
   }
 }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/dialog/dialog_route.dart';
-import 'package:recruitment_division_automation/components/add_new_question.dart';
+import 'add_new_question.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controllers/common_question_controller.dart';
 import '../utils/config.dart';
-import '../views/common_question_page.dart';
 
 class CommonQuestionBody extends StatefulWidget {
   const CommonQuestionBody({super.key});
@@ -39,34 +37,47 @@ class _CommonQuestionBodyState extends State<CommonQuestionBody> {
                           color: Color.fromARGB(255, 138, 102, 10)),
                     ),
                     Config.spaceMeduim,
-                    ListTile(
-                      iconColor: Colors.black,
-                      title: const Text(
-                        'اضف سؤال جديد',
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.normal),
-                      ),
-                      trailing: const Icon(
-                        Icons.edit_note_rounded,
-                        size: 25,
-                      ),
-                      onTap: () {
-                        questionDialog(
-                          () async {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            String token = prefs.getString('token') ?? '';
-                            await controller.addNewQuestion(
-                                controller.questionController.text,
-                                controller.answerController.text,
-                                token);
-                            controller.GetBuilderkey.currentState!.activate();
-                            Get.back();
-                          },
-                        );
-                      },
-                    ),
+                    GetBuilder(
+                        init: CommonQuestionController(),
+                        builder: (controller) {
+                          return Visibility(
+                            visible: controller.role > 1 ? true : false,
+                            child: ListTile(
+                              iconColor: Colors.black,
+                              title: const Text(
+                                'اضف سؤال جديد',
+                                textDirection: TextDirection.rtl,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                              trailing: const Icon(
+                                Icons.edit_note_rounded,
+                                size: 25,
+                              ),
+                              onTap: () {
+                                questionDialog(
+                                  () async {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    String token =
+                                        prefs.getString('token') ?? '';
+                                    controller
+                                        .addNewQuestion(
+                                            controller.questionController.text,
+                                            controller.answerController.text,
+                                            token)
+                                        .then((_) => Get.back(
+                                            // closeOverlays: true,
+                                            ));
+                                    // controller.GetBuilderkey.currentState!.activate();
+                                    // Get.back();
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                        }),
                     GetBuilder(
                         key: controller.GetBuilderkey,
                         init: CommonQuestionController(),
@@ -88,27 +99,12 @@ class _CommonQuestionBodyState extends State<CommonQuestionBody> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
                                             children: [
-                                              IconButton(
-                                                  onPressed: () async {
-                                                    SharedPreferences prefs =
-                                                        await SharedPreferences
-                                                            .getInstance();
-                                                    String token =
-                                                        prefs.getString(
-                                                                'token') ??
-                                                            '';
-                                                    await controller
-                                                        .deleteQuestion(token,
-                                                            question.data.id!);
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.delete,
-                                                    size: 13,
-                                                    color: Colors.red,
-                                                  )),
-                                              IconButton(
-                                                  onPressed: () {
-                                                    questionDialog(() async {
+                                              Visibility(
+                                                visible: controller.role > 1
+                                                    ? true
+                                                    : false,
+                                                child: IconButton(
+                                                    onPressed: () async {
                                                       SharedPreferences prefs =
                                                           await SharedPreferences
                                                               .getInstance();
@@ -117,28 +113,56 @@ class _CommonQuestionBodyState extends State<CommonQuestionBody> {
                                                                   'token') ??
                                                               '';
                                                       await controller
-                                                          .updateQuestionAndAnswer(
-                                                              controller
-                                                                  .questionController
-                                                                  .text,
-                                                              controller
-                                                                  .answerController
-                                                                  .text,
+                                                          .deleteQuestion(
                                                               token,
                                                               question
                                                                   .data.id!);
-                                                      controller.GetBuilderkey
-                                                          .currentState!
-                                                          .activate();
-                                                      Get.back();
-                                                    });
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.edit,
-                                                    size: 13,
-                                                    color: Color.fromARGB(
-                                                        255, 138, 102, 10),
-                                                  )),
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.delete,
+                                                      size: 13,
+                                                      color: Colors.red,
+                                                    )),
+                                              ),
+                                              Visibility(
+                                                visible: controller.role > 1
+                                                    ? true
+                                                    : false,
+                                                child: IconButton(
+                                                    onPressed: () {
+                                                      questionDialog(() async {
+                                                        SharedPreferences
+                                                            prefs =
+                                                            await SharedPreferences
+                                                                .getInstance();
+                                                        String token =
+                                                            prefs.getString(
+                                                                    'token') ??
+                                                                '';
+                                                        await controller
+                                                            .updateQuestionAndAnswer(
+                                                                controller
+                                                                    .questionController
+                                                                    .text,
+                                                                controller
+                                                                    .answerController
+                                                                    .text,
+                                                                token,
+                                                                question
+                                                                    .data.id!);
+                                                        controller.GetBuilderkey
+                                                            .currentState!
+                                                            .activate();
+                                                        Get.back();
+                                                      });
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.edit,
+                                                      size: 13,
+                                                      color: Color.fromARGB(
+                                                          255, 138, 102, 10),
+                                                    )),
+                                              ),
                                               Container(
                                                 padding: const EdgeInsets.only(
                                                     left: 2,

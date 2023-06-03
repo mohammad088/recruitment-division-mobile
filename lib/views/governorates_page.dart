@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/components/admin_home_page_drawer.dart';
-import 'package:recruitment_division_automation/controllers/governates_areas_controller.dart';
+import '../components/admin_home_page_drawer.dart';
+import '../controllers/governates_areas_controller.dart';
 import '../components/custom_app_bar.dart';
 import '../utils/config.dart';
 

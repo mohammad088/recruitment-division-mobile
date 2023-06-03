@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:recruitment_division_automation/components/admin_home_page_drawer.dart';
-import 'package:recruitment_division_automation/components/circle_chart.dart';
-import 'package:recruitment_division_automation/components/column_chart.dart';
+import '../components/admin_home_page_drawer.dart';
+import '../components/circle_chart.dart';
+import '../components/column_chart.dart';
 import '../components/admin_page_card.dart';
 import '../components/custom_app_bar.dart';
 import '../utils/config.dart';

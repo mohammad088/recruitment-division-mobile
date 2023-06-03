@@ -11,7 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     Config().init(context);
     return AppBar(
-      title: InkWell(
+      title: GestureDetector(
         onTap: () {
           if (Get.currentRoute != '/maketransaction') {
             Get.toNamed('/maketransaction');

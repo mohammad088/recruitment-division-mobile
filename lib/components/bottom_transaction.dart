@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class BottomTranaction extends StatelessWidget {
   BottomTranaction({super.key , this.onPressed , this.onBackPressed});

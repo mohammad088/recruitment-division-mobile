@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import '../controllers/page_view_controller.dart';
-import '../utils/config.dart';
-import '../components/bottom_transaction.dart';
-import '../components/text_field_transaction.dart';
+import '../../controllers/et_controller.dart';
+import '/utils/config.dart';
+import '/components/bottom_transaction.dart';
+import '/components/text_field_transaction.dart';
 
-class Transaction1 extends StatelessWidget {
-  Transaction1({super.key});
-  final c = Get.put(PageviewController());
+class Et1 extends StatelessWidget {
+  Et1({super.key});
+  final c = Get.put(EtController());
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -28,7 +28,7 @@ class Transaction1 extends StatelessWidget {
                           TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -74,7 +74,7 @@ class Transaction1 extends StatelessWidget {
                           TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -120,7 +120,7 @@ class Transaction1 extends StatelessWidget {
                           TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -166,7 +166,7 @@ class Transaction1 extends StatelessWidget {
                           TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,

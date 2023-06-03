@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/components/dialog.dart';
-import 'package:recruitment_division_automation/controllers/login_controller.dart';
-import 'package:recruitment_division_automation/views/admin_home_page.dart';
+import '../components/dialog.dart';
+import '../controllers/login_controller.dart';
+import 'admin_home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/config.dart';
 import '../utils/themes.dart';

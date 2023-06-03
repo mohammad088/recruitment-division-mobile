@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/components/dialog.dart';
+import '../components/dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/add_common_question_model.dart';
 import '../models/common_question_model.dart';
 
 class CommonQuestionController extends GetxController {
+  String link = 'http://10.0.2.2:8000';
+  int role = 1;
   final GlobalKey<GetBuilderState> GetBuilderkey = GlobalKey();
   int index = 0;
   TextEditingController questionController = TextEditingController();
@@ -20,7 +22,7 @@ class CommonQuestionController extends GetxController {
   Future<dynamic> getAllQuestions(token) async {
     try {
       final response =
-          await Dio().get('http://127.0.0.1:8000/api/question_and_answer',
+          await Dio().get('$link/api/question_and_answer',
               options: Options(
                 headers: {'Content-Type': 'application/json'},
               ),
@@ -49,6 +51,7 @@ class CommonQuestionController extends GetxController {
   void onInit() async {
     prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? '';
+    await getrole();
     await getAllQuestions(token);
     super.onInit();
   }
@@ -56,7 +59,7 @@ class CommonQuestionController extends GetxController {
   Future<dynamic> addNewQuestion(String question, String answer, token) async {
     try {
       final response = await Dio().post(
-          'http://127.0.0.1:8000/api/question_and_answer/store',
+          '$link/api/question_and_answer/store',
           options: Options(headers: {'Content-Type': 'application/json'}),
           data: {'question': question, 'answer': answer, 'token': token});
       if (response.statusCode == 200 && response.data != '') {
@@ -75,7 +78,7 @@ class CommonQuestionController extends GetxController {
       String question, String answer, String token, int index) async {
     try {
       final response = await Dio().post(
-          'http://127.0.0.1:8000/api/question_and_answer/update/$index',
+          '$link/api/question_and_answer/update/$index',
           options: Options(headers: {'Content-Type': 'application/json'}),
           data: {'question': question, 'answer': answer, 'token': token});
       if (response.statusCode == 200 && response.data != '') {
@@ -94,7 +97,7 @@ class CommonQuestionController extends GetxController {
   Future<dynamic> deleteQuestion(String token, int index) async {
     try {
       final response = await Dio().post(
-          'http://127.0.0.1:8000/api/question_and_answer/delete/$index',
+          '$link/api/question_and_answer/delete/$index',
           options: Options(headers: {'Content-Type': 'application/json'}),
           data: {'token': token});
       if (response.statusCode == 200) {
@@ -104,6 +107,13 @@ class CommonQuestionController extends GetxController {
     } catch (error) {
       error.printError();
       dialog('هنالك خطأ');
+      update();
+    }
+  }
+
+  Future<dynamic> getrole() async {
+    role = prefs.getInt('role') ?? 1;
+    if (role > 1) {
       update();
     }
   }

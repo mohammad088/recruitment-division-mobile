@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class Themes {
   static ThemeData themeData = ThemeData(
+      fontFamily: "Cairo",
       appBarTheme: const AppBarTheme(
           iconTheme: IconThemeData(color: Colors.grey),
           backgroundColor: Colors.white,

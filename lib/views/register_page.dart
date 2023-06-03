@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/components/dialog.dart';
-import 'package:recruitment_division_automation/controllers/register_controller.dart';
-import 'package:recruitment_division_automation/views/admin_home_page.dart';
+import 'package:recruitment_division_automation/views/login_page.dart';
+import '../components/dialog.dart';
+import '../controllers/register_controller.dart';
+import 'admin_home_page.dart';
 
 import '../utils/config.dart';
 import '../utils/themes.dart';
@@ -120,7 +121,7 @@ class RegisterPage extends StatelessWidget {
                                   controller.passwordController.text,
                                   controller.emailController.text);
                               if (controller.isRegistered) {
-                                Get.offAll(() => const AdminHomePage());
+                                Get.offAll(() =>  LoginPage());
                               } else {
                                 dialog(controller.message);
                               }

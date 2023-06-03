@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/controllers/common_question_controller.dart';
+import '../controllers/common_question_controller.dart';
 import '../utils/config.dart';
 
 void questionDialog(void Function()? onPressed) {

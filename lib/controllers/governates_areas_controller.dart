@@ -5,6 +5,7 @@ import '../components/dialog.dart';
 import '../models/provinces_model.dart';
 
 class GovernatesAreasController extends GetxController {
+  String link = 'http://10.0.2.2:8000';
   SharedPreferences? prefs;
   String token = '';
   Provinces provinces = Provinces();
@@ -107,7 +108,7 @@ class GovernatesAreasController extends GetxController {
 
   Future<dynamic> getAllProvinces(String token) async {
     try {
-      final response = await Dio().get('http://127.0.0.1:8000/api/provinces',
+      final response = await Dio().get('$link/api/provinces',
           options: Options(headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token'
@@ -116,7 +117,6 @@ class GovernatesAreasController extends GetxController {
       if (response.statusCode == 200 && response.data != '') {
         provinces = Provinces.fromJson(response.data);
         Apigovernorates.addAll(provinces.data!);
-        print(Apigovernorates[1].name);
         update();
       }
     } catch (error) {

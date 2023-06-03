@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import '../components/dialog.dart';
-import '../components/bottom_transaction.dart';
-import '../components/numbers_text_field.dart';
-import '../components/text_field_transaction.dart';
-import '../controllers/page_view_controller.dart';
-import '../utils/config.dart';
+import '../../controllers/et_controller.dart';
+import '/components/dialog.dart';
+import '/components/bottom_transaction.dart';
+import '/components/numbers_text_field.dart';
+import '/utils/config.dart';
 
-class Transaction2 extends StatelessWidget {
-  Transaction2({super.key});
-  final c = Get.put(PageviewController());
+class Et2 extends StatelessWidget {
+  Et2({super.key});
+  final c = Get.put(EtController());
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -24,7 +23,7 @@ class Transaction2 extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return Column(
                             children: [
@@ -38,6 +37,7 @@ class Transaction2 extends StatelessWidget {
                                   ),
                                 ),
                                 isDense: false,
+                                value: c.selectedGovernorates.toString(),
                                 menuMaxHeight: Config.screenHeight! * 0.3,
                                 isExpanded: true,
                                 decoration: InputDecoration(
@@ -112,7 +112,7 @@ class Transaction2 extends StatelessWidget {
                         }),
                     Config.spaceMeduim,
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return Column(
                             children: [
@@ -151,7 +151,7 @@ class Transaction2 extends StatelessWidget {
                           );
                         }),
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return NumbersTextField(
                             hint: 'ادخل الرقم الوطني',
@@ -189,9 +189,10 @@ class Transaction2 extends StatelessWidget {
                             hintTextDirection: TextDirection.rtl)),
                     Config.spaceMeduim,
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return DropdownButtonFormField(
+                            value: c.selectedStatus,
                             hint: const SizedBox(
                               width: double.maxFinite,
                               child: Text(
@@ -233,9 +234,10 @@ class Transaction2 extends StatelessWidget {
                         }),
                     Config.spaceMeduim,
                     GetBuilder(
-                        init: PageviewController(),
+                        init: EtController(),
                         builder: (c) {
                           return DropdownButtonFormField(
+                            value: c.selectedTransactionType,
                             hint: const SizedBox(
                               width: double.maxFinite,
                               child: Text(
@@ -321,10 +323,6 @@ class Transaction2 extends StatelessWidget {
                   } else if (c.selectedStatus.isEmpty) {
                     dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
                   } else if (c.selectedTransactionType.isEmpty) {
-                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
-                  } else if (c.selectedGovernorates == 0) {
-                    dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
-                  } else if (c.selectedArea == 0) {
                     dialog('الرجاء تعبئة الحقول ببيانات صحيحة');
                   } else if (c.notesController.text.isEmpty) {
                     dialog('الرجاء تعبئة الحقول ببيانات صحيحة');

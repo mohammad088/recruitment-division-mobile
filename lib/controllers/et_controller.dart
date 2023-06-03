@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart' as Dio;
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components/dialog.dart';
 import '../models/areas_model.dart' as area;
@@ -10,23 +13,27 @@ import '../models/provinces_model.dart';
 import '../models/transastions.dart' as tran;
 import '../models/transaction_table.dart' as trant;
 
-class PageviewController extends GetxController {
+class EtController extends GetxController {
+  int transactionID = int.parse(Get.arguments[17]);
   String link = 'http://10.0.2.2:8000';
   GlobalKey selectedAreaKey = GlobalKey();
-  bool storeAccess = false;
+  bool updateAccess = false;
   int role = 1;
   List<area.Data> proAreas = [
-    area.Data(id: 0, name: 'اختر منطقتك', provincesId: 15)
+    area.Data(
+        id: Get.arguments[5],
+        name: Get.arguments[6],
+        provincesId: Get.arguments[4])
   ];
   area.AreasModel areasModel = area.AreasModel();
   late SharedPreferences prefs;
   late String token;
-  int selectedGovernorates = 0;
+  int selectedGovernorates = Get.arguments[4];
   List<Data> governorates = [];
   Provinces provinces = Provinces();
-  int selectedArea = 0;
-  String selectedStatus = '';
-  String selectedTransactionType = '';
+  int selectedArea = Get.arguments[5];
+  String selectedStatus = Get.arguments[11].toString();
+  String selectedTransactionType = Get.arguments[12].toString();
   bool firstNameerror = true;
   bool lastNameerror = true;
   bool fatherNameerror = true;
@@ -34,16 +41,23 @@ class PageviewController extends GetxController {
   bool numberLengthError = true;
   bool nationalNumberError = true;
   TextEditingController firstNameController =
-      TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController fatherNameController = TextEditingController();
-  TextEditingController motherNameController = TextEditingController();
+      TextEditingController(text: Get.arguments[0]);
+  TextEditingController lastNameController =
+      TextEditingController(text: Get.arguments[1]);
+  TextEditingController fatherNameController =
+      TextEditingController(text: Get.arguments[2]);
+  TextEditingController motherNameController =
+      TextEditingController(text: Get.arguments[3]);
   TextEditingController governorateNameController = TextEditingController();
   TextEditingController areaNameController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController nationalNumberController = TextEditingController();
-  TextEditingController restrictionNumberController = TextEditingController();
-  TextEditingController notesController = TextEditingController();
+  TextEditingController phoneNumberController =
+      TextEditingController(text: Get.arguments[7].toString());
+  TextEditingController nationalNumberController =
+      TextEditingController(text: Get.arguments[8].toString());
+  TextEditingController restrictionNumberController =
+      TextEditingController(text: Get.arguments[10].toString());
+  TextEditingController notesController =
+      TextEditingController(text: Get.arguments[9]);
   int currentPage = 0;
   List<tran.Province> enlistmentStatus = [
     tran.Province(id: 1, name: 'معفي'),
@@ -58,6 +72,10 @@ class PageviewController extends GetxController {
     tran.Transactiontype(id: 4, type: 'بيان وضع'),
   ];
   final PageController controller = PageController();
+  String attachedImagePath = Get.arguments[13];
+  String userImagePath = Get.arguments[14];
+  String frontFaceOfIdentityPath = Get.arguments[15];
+  String backFaceOfIdentityPath = Get.arguments[16];
   File specialImage = File('');
   File frontIdImage = File('');
   File backIdImage = File('');
@@ -130,7 +148,8 @@ class PageviewController extends GetxController {
     }
   }
 
-  Future<bool> addNewTransaction(trant.Data data, String token) async {
+  Future<dynamic> updateTransaction(
+      trant.Data data, String token, int index) async {
     String attachedImage = data.attachedImage!.path.split('/').last;
     String userImage = data.userImage!.path.split('/').last;
     String frontFaceOfIdentity = data.frontFaceOfIdentity!.path.split('/').last;
@@ -164,21 +183,34 @@ class PageviewController extends GetxController {
     });
     try {
       final Response response = await connect.post(
-          '$link/api/transaction/store', formData,
+          '$link/api/transaction/update/$index', formData,
           headers: {'Authorization': 'Bearer $token'});
       print(response.body);
       if (response.statusCode == 200 && response.body != '') {
         print(response.body);
-        storeAccess = true;
+        updateAccess = true;
         update();
-        return storeAccess;
+        return updateAccess;
       }
-      return storeAccess;
+      return updateAccess;
     } catch (error) {
       error.printError();
       dialog('هنالك خطأ');
-      return storeAccess;
+      return updateAccess;
     }
+  }
+
+  Future<File> downloadFile(String url, {Map<String, String>? headers}) async {
+    http.Client client = http.Client();
+    var req = await client.get(Uri.parse(url), headers: headers);
+    if (req.statusCode >= 400) {
+      throw HttpException(req.statusCode.toString());
+    }
+    var bytes = req.bodyBytes;
+    String dir = (await getTemporaryDirectory()).path;
+    File file = File('$dir/${basename(url)}');
+    await file.writeAsBytes(bytes);
+    return file;
   }
 
   Future<dynamic> getrole() async {

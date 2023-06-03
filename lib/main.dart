@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/utils/themes.dart';
-import 'package:recruitment_division_automation/views/admin_home_page.dart';
-import 'package:recruitment_division_automation/views/area_page.dart';
-import 'package:recruitment_division_automation/views/areas_page.dart';
-import 'package:recruitment_division_automation/views/common_question_page.dart';
-import 'package:recruitment_division_automation/views/governorates_page.dart';
-import 'package:recruitment_division_automation/views/login_page.dart';
-import 'package:recruitment_division_automation/views/make_transaction.dart';
-import 'package:recruitment_division_automation/views/register_page.dart';
-import 'package:recruitment_division_automation/views/transactions_page.dart';
+import 'package:recruitment_division_automation/views/et.dart';
+import 'package:recruitment_division_automation/views/user_info.dart';
+import 'utils/themes.dart';
+import 'views/admin_home_page.dart';
+import 'views/area_page.dart';
+import 'views/areas_page.dart';
+import 'views/common_question_page.dart';
+import 'views/governorates_page.dart';
+import 'views/login_page.dart';
+import 'views/make_transaction.dart';
+import 'views/register_page.dart';
+import 'views/transactions_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +39,9 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/areaspage', page: () => const AreasPage()),
         GetPage(name: '/registerpage', page: () => RegisterPage()),
         GetPage(name: '/loginpage', page: () => LoginPage()),
-        GetPage(name: '/allareas', page: () =>  AllAreasPage())
+        GetPage(name: '/allareas', page: () => AllAreasPage()),
+        GetPage(name: '/Et', page: () => Et()),
+        GetPage(name: '/userinfo', page: () => const UserInfo())
       ],
     );
   }

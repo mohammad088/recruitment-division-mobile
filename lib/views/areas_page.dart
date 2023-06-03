@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recruitment_division_automation/controllers/areas_controller.dart';
+import '../controllers/areas_controller.dart';
 
 import '../components/admin_home_page_drawer.dart';
 import '../components/custom_app_bar.dart';
@@ -92,6 +92,6 @@ class AllAreasPage extends StatelessWidget {
                     }),
               ],
             ))
-        : CircularProgressIndicator();
+        : const CircularProgressIndicator();
   }
 }
